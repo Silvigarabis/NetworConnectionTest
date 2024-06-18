@@ -1,0 +1,78 @@
+name: build
+on: 
+- pull_request
+- push
+- workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+
+    - name: setup jdk 8
+      uses: actions/setup-java@v4
+      with:
+        java-version: 8
+        distribution: 'temurin'
+
+    - name: checkout repository
+      uses: actions/checkout@v4
+
+    - name: validate gradle wrapper
+      uses: gradle/wrapper-validation-action@v1
+
+    - name: make gradle wrapper executable
+      if: ${{ runner.os != 'Windows' }}
+      run: chmod +x ./gradlew
+
+    - name: build
+      uses: burrunan/gradle-cache-action@v1
+      with:
+        job-id: jdk8
+        arguments: build
+        gradle-version: 8.7
+        gradle-distribution-sha-256-sum-warning: false
+
+    - name: capture build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: NetworkConnectionTest
+        path: build/libs/
+    
+  buildmod:
+    runs-on: ubuntu-22.04
+    steps:
+
+    - name: setup jdk 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: 17
+        distribution: 'temurin'
+
+    - name: checkout repository
+      uses: actions/checkout@v4
+
+    - name: validate gradle wrapper
+      working-directory: testmod/
+      uses: gradle/wrapper-validation-action@v1
+
+    - name: make gradle wrapper executable
+      working-directory: testmod/
+      if: ${{ runner.os != 'Windows' }}
+      run: chmod +x ./gradlew
+
+    - name: build
+      uses: burrunan/gradle-cache-action@v1
+      working-directory: testmod/
+      with:
+        job-id: jdkq7
+        arguments: build --build-cache
+        gradle-version: 8.7
+        gradle-distribution-sha-256-sum-warning: false
+
+    - name: capture build artifacts
+      working-directory: testmod/
+      uses: actions/upload-artifact@v4
+      with:
+        name: NetworkConnectionTest-MinecraftMod
+        path: build/libs/

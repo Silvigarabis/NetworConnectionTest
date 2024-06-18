@@ -1,0 +1,25 @@
+{
+   "schemaVersion": 1,
+   "id": "testmod",
+   "version": "${version}",
+   "name": "testmod",
+   "description": "for test",
+   "authors": [
+      "Silvigarabis"
+   ],
+   "contact": {
+      "homepage": "https://github.com/Silvigarabis"
+   },
+   "license": "UNLICENSE",
+   "environment": "*",
+   "entrypoints": {
+      "main": [
+         "me.silvigarabis.TestMod"
+      ]
+   },
+   "depends": {
+      "java": ">=17",
+      "fabricloader": ">=${loader_version}",
+      "minecraft": "*"
+   }
+}
